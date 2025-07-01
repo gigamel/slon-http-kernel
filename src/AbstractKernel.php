@@ -60,7 +60,7 @@ abstract class AbstractKernel
         } else {
             $controller = new $handler();
         }
-        $response = $container($request);
+        $response = $controller($request);
         // End: need to change
         
         /** @var SapiEmmiterInterface $emmiter */
