@@ -9,8 +9,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Slon\Http\Kernel\Contract\ApplicationInterface;
 use Slon\Http\Kernel\Contract\SapiEmmiterInterface;
-use Slon\Http\Kernel\Exception\HttpException;
 use Throwable;
+
 use function php_sapi_name;
 use function sprintf;
 
@@ -50,18 +50,7 @@ abstract class AbstractKernel
         
         $request = $this->getServerRequest();
         
-        // Start: need to change
-        $afterRequest = $application->handle($request);
-        if (!$handler = $afterRequest->getAttribute('_handler')) {
-            throw new HttpException('Not found handler', 404);
-        }
-        if ($container->has($handler)) {
-            $controller = $container->get($handler);
-        } else {
-            $controller = new $handler();
-        }
-        $response = $controller($request);
-        // End: need to change
+        $response = $application->handle($request);
         
         /** @var SapiEmmiterInterface $emmiter */
         $emmiter = $container->get(SapiEmmiterInterface::class);

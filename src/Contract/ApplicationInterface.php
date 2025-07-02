@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace Slon\Http\Kernel\Contract;
 
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-interface ApplicationInterface
-{
-    public function handle(
-        ServerRequestInterface $request,
-    ): ServerRequestInterface;
-}
+interface ApplicationInterface extends RequestHandlerInterface {}
