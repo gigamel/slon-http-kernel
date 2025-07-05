@@ -10,7 +10,7 @@ use Throwable;
 
 use function sprintf;
 
-class HttpException extends RuntimeException
+class HttpException extends RuntimeException implements HttpExceptionInterface
 {
     /**
      * @throws InvalidArgumentException
@@ -18,6 +18,7 @@ class HttpException extends RuntimeException
     public function __construct(
         string $message = '',
         int $code = 500,
+        protected array $headers = [], // Todo
         ?Throwable $previous = null,
     ) {
         if ($code < 200 || $code > 599) {
@@ -28,5 +29,13 @@ class HttpException extends RuntimeException
         }
         
         parent::__construct($message, $code, $previous);
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getHeaders(): array
+    {
+        return $this->headers;
     }
 }

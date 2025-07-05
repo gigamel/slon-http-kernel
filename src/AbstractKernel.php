@@ -6,9 +6,9 @@ namespace Slon\Http\Kernel;
 
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
-use Slon\Http\Kernel\Contract\ApplicationInterface;
-use Slon\Http\Kernel\Contract\SapiEmmiterInterface;
+use Slon\Http\Kernel\Exception\KernelException;
 use Throwable;
 
 use function php_sapi_name;
@@ -45,15 +45,19 @@ abstract class AbstractKernel
     {
         $container = $this->getContainer();
         
-        /** @var ApplicationInterface $application */
-        $application = $container->get(ApplicationInterface::class);
+        $application = $container->get('application');
+        if (!$application instanceof RequestHandlerInterface) {
+            throw new KernelException(sprintf(
+                'Application instance must implements interface "%s"',
+                RequestHandlerInterface::class,
+            ));
+        }
         
         $request = $this->getServerRequest();
         
         $response = $application->handle($request);
         
-        /** @var SapiEmmiterInterface $emmiter */
-        $emmiter = $container->get(SapiEmmiterInterface::class);
+        $emmiter = $container->get('sapi_emmiter');
         
         $emmiter->emmit($response);
     }
